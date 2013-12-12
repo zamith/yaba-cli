@@ -6,6 +6,8 @@ program :version, '1.0'
 program :description, 'The cli version of YABA'
 
 require 'bundler'
+Bundler.require(:default, :development)
+
 require 'pry'
 if ENV['YABA_DB'] == 'mongoid'
   require 'mongoid'
@@ -16,15 +18,13 @@ else
   ActiveRecord::Base.establish_connection(connection_info)
 end
 
-require_relative '../../config'
-Core.configure do |config|
+require 'yaba/core'
+Yaba::Core::Config.configure do |config|
   config.repository = :active_record
   if ENV['YABA_DB'] == 'mongoid'
     config.repository.posts = :mongoid
   end
 end
-require "#{APP_ROOT}/interactors/gets_posts"
-require "#{APP_ROOT}/interactors/creates_posts"
 
 command :get do |c|
   c.action do |args, options|
